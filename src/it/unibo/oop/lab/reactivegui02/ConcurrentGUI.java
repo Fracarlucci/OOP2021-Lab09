@@ -24,6 +24,7 @@ public class ConcurrentGUI extends JFrame {
     private final JButton stop = new JButton("stop");
     private final JButton down = new JButton("down");
     private final JButton up = new JButton("up");
+    protected final Agent agent = new Agent();
     
     public ConcurrentGUI() {
         super();
@@ -37,20 +38,19 @@ public class ConcurrentGUI extends JFrame {
         panel.add(stop);
         this.getContentPane().add(panel);
         this.setVisible(true);
-        
-        final Agent agent = new Agent();
+
         new Thread(agent).start();
         
         up.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 agent.upCounting();
             }     
         });
         
         down.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 agent.downCounting();
             }     
         });
@@ -63,7 +63,7 @@ public class ConcurrentGUI extends JFrame {
         });
     }
     
-    private class Agent implements Runnable {
+    public class Agent implements Runnable {
 
         private volatile boolean stop;
         private volatile int counter;
