@@ -65,13 +65,13 @@ public class ConcurrentGUI extends JFrame {
     
     public class Agent implements Runnable {
 
-        private volatile boolean stop;
+        private volatile boolean stops;
         private volatile int counter;
-        private volatile boolean down;
+        private volatile boolean downs;
 
         @Override
         public void run() {
-            while (!this.stop) {
+            while (!this.stops) {
                 try {
                     SwingUtilities.invokeAndWait(new Runnable() {
                         @Override
@@ -79,7 +79,7 @@ public class ConcurrentGUI extends JFrame {
                             ConcurrentGUI.this.display.setText(Integer.toString(Agent.this.counter));
                         }
                     });
-                    if(!down) {
+                    if(!downs) {
                         this.counter++;
                     } else {
                         this.counter--;
@@ -92,15 +92,18 @@ public class ConcurrentGUI extends JFrame {
         }
         
         public void upCounting() {
-            this.down = false;
+            this.downs = false;
         }
 
         public void downCounting() {
-            this.down = true;
+            this.downs = true;
         }
         
         public void stopCounting() {
-            this.stop = true;
+            this.stops = true;
+            up.setEnabled(false);
+            down.setEnabled(false);
+            stop.setEnabled(false);
         }
     }
 }
