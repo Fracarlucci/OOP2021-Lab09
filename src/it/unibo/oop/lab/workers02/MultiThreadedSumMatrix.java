@@ -3,40 +3,49 @@ package it.unibo.oop.lab.workers02;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.unibo.oop.lab.workers01.MultiThreadedListSumClassic.Worker;
+/**
+ * 
+ * Matrix sum with multithreading.
+ *
+ */
+public class MultiThreadedSumMatrix implements SumMatrix {
 
-public class MultiThreadedSumMatrix implements SumMatrix{
-    
     private final int nthread;
-    
+
+    /**
+     * 
+     * @param nthread to split the work
+     */
     public MultiThreadedSumMatrix(final int nthread) {
         this.nthread = nthread;
         }
 
     private static class Worker extends Thread {
-        private  List<Integer> list;
-        private  int startpos;
-        private  int nelem;
+        private final double[][] matrix;
+        private final int startpos;
+        private final int nelem;
         private long res;
-    
-    
-    Worker(final List<Integer> list, final int startpos, final int nelem) {
+
+
+    Worker(final double[][] matrix, final int startpos, final int nelem) {
         super();
-        this.list = list;
+        this.matrix = matrix;
         this.startpos = startpos;
         this.nelem = nelem;
     }
-    
+
     @Override
     public void run() {
         System.out.println("Working from position " + startpos + " to position " + (startpos + nelem - 1));
-        for (int i = startpos; i < list.size() && i < startpos + nelem; i++) {
-            this.res += this.list.get(i);
+        for (int i = startpos; i < matrix.length && i < startpos + nelem; i++) {
+            for (final double j : this.matrix[i]) {
+                this.res += j;
+            }
         }
     }
 
     /**
-     * Returns the result of summing up the integers within the list.
+     * Returns the result of summing up the integers within the matrix.
      * 
      * @return the sum of every element in the array
      */
@@ -45,16 +54,16 @@ public class MultiThreadedSumMatrix implements SumMatrix{
     }
 
 }
-    
+
     @Override
     public double sum(final double[][] matrix) {
-        final int size = list.size() % nthread + list.size() / nthread;
+        final int size = matrix.length % nthread + matrix.length / nthread;
         /*
-         * Build a list of workers
+         * Build a matrix of workers
          */
-        final List<Worker> workers = new ArrayList<>(nthread);
-        for (int start = 0; start < list.size(); start += size) {
-            workers.add(new Worker(list, start, size));
+        final List<Worker> workers = new ArrayList<>();
+        for (int start = 0; start < matrix.length; start += size) {
+                workers.add(new Worker(matrix, start, size));
         }
         /*
          * Start them
@@ -80,7 +89,6 @@ public class MultiThreadedSumMatrix implements SumMatrix{
          * Return the sum
          */
         return sum;
-    }
     }
 
 }
